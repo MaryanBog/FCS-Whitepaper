@@ -55,8 +55,9 @@ fcs-sdk/
 │   └── servo_position_control.cpp
 │
 └── CMakeLists.txt
-}
 ```
+
+---
 
 ## Quick Start
 
@@ -67,8 +68,6 @@ fcs-sdk/
 #include "fcs/operators/e_operator.h"
 #include "fcs/operators/finv_operator.h"
 #include "fcs/operators/g_operator.h"
-}
-```
 
 // Initialize the controller:
 fcs::FCS ctrl;
@@ -86,13 +85,14 @@ double loop_step(double delta) {
     double u = ctrl.update(delta);
     return u; // control signal for the actuator
 }
+```
+
+---
 
 ## How the Control Cycle Works
 
-The FCS update step computes:
-
 \[
-X = F(\Delta) 
+X = F(\Delta)
 \]
 — deviation transformation
 
@@ -113,6 +113,8 @@ u = G(\Delta')
 
 The controller provides smooth and stable convergence, even in nonlinear or turbulent environments where classical PID becomes unstable.
 
+---
+
 ## Integration Notes
 
 - Designed for real-time loops (100–1000 Hz)
@@ -120,8 +122,9 @@ The controller provides smooth and stable convergence, even in nonlinear or turb
 - Can directly replace or augment PID controllers
 - G operator can be nonlinear or saturated (tanh, piecewise, adaptive)
 
+---
+
 ## License
 
 All SDK materials are the intellectual property of the author.  
 For commercial usage, licensing terms are available on request.
-
