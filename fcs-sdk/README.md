@@ -251,7 +251,6 @@ This method performs:
 
 ```cpp
 void setF(const fcs::FOperator& op);
-
 ```
 
 Assigns the forward transform operator `F`.
