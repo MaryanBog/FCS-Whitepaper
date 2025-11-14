@@ -221,7 +221,8 @@ Main controller implementing the full FXI–Δ–E cycle.
 fcs::FCS();
 ```
 
-Creates a controller instance. Operators must be assigned before update().
+Creates a controller instance.
+No default operators are assigned. All operators (F, E, F⁻¹, G) must be set manually before using update().
 
 ---
 
@@ -231,13 +232,15 @@ Creates a controller instance. Operators must be assigned before update().
 double update(double delta);
 ```
 
-Runs a single control-loop iteration.
+Processes the deviation through F → E → F⁻¹ → G and returns the control signal.
 
 **Parameters:**
 - `delta` — current deviation (error)
 
 **Returns:**
 - `double` — actuator command `u`
+
+All operators (F, E, F⁻¹, G) must be assigned before calling update().
 
 This method performs:
 
@@ -251,7 +254,6 @@ This method performs:
 
 ```cpp
 void setF(const fcs::FOperator& op);
-```
 
 Assigns the forward transform operator `F`.
 
@@ -271,7 +273,6 @@ Assigns the equilibrium operator `E`.
 
 ```cpp
 void setFInv(const fcs::FInvOperator& op);
-```
 
 Assigns the inverse transform operator `F⁻¹`.
 
@@ -281,7 +282,6 @@ Assigns the inverse transform operator `F⁻¹`.
 
 ```cpp
 void setG(const fcs::GOperator& op);
-```
 
 Assigns the control-output operator `G`.
 
