@@ -389,7 +389,7 @@ double default_G(double x) {
 This is the simplest linear control law:
 
 \[
-u = \Delta'
+u = G(\Delta')
 \]
 
 Users can replace it with:
