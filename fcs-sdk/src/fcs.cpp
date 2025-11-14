@@ -27,14 +27,26 @@ namespace fcs {
     // --- Основной цикл обновления ---
     double FCS::update(double delta) {
 
-        // Порядок строгий:
-        // 1. FXI = F(delta)
-        // 2. X' = E(FXI)
-        // 3. delta' = FInv(X')
-        // 4. u = G(delta')
+        // Базовая проверка: все операторы должны быть заданы
+        if (!F || !E || !FInv || !G) {
+            // В проде сюда можно повесить assert или error-code.
+            // Пока — возвращаем 0 как безопасное значение.
+            return 0.0;
+        }
 
-        // Реализация будет добавлена на следующем шаге
-        return 0.0;
+        // 1. FXI = F(delta)
+        double x = F(delta);
+
+        // 2. X' = E(FXI)
+        double x_next = E(x);
+
+        // 3. delta' = FInv(X')
+        double delta_next = FInv(x_next);
+
+        // 4. u = G(delta')
+        double u = G(delta_next);
+
+        return u;
     }
 
-}
+} // namespace fcs
