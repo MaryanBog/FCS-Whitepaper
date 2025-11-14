@@ -218,10 +218,10 @@ Main controller implementing the full FXI–Δ–E cycle.
 ### **Constructor**
 
 ```cpp
-FCS();
+fcs::FCS();
 ```
 
-Creates an empty controller with no operators set.
+Creates a controller instance. Operators must be assigned before update().
 
 ---
 
@@ -250,7 +250,8 @@ This method performs:
 ### **setF()**
 
 ```cpp
-void setF(FOperator op);
+void setF(const fcs::FOperator& op);
+
 ```
 
 Assigns the forward transform operator `F`.
@@ -260,7 +261,7 @@ Assigns the forward transform operator `F`.
 ### **setE()**
 
 ```cpp
-void setE(EOperator op);
+void setE(const fcs::EOperator& op);
 ```
 
 Assigns the equilibrium operator `E`.
@@ -270,7 +271,7 @@ Assigns the equilibrium operator `E`.
 ### **setFInv()**
 
 ```cpp
-void setFInv(FInvOperator op);
+void setFInv(const fcs::FInvOperator& op);
 ```
 
 Assigns the inverse transform operator `F⁻¹`.
@@ -280,7 +281,7 @@ Assigns the inverse transform operator `F⁻¹`.
 ### **setG()**
 
 ```cpp
-void setG(GOperator op);
+void setG(const fcs::GOperator& op);
 ```
 
 Assigns the control-output operator `G`.
