@@ -27,6 +27,59 @@ The library is dependency-free and suitable for real-time systems.
 
 ---
 
+## Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-org/fcs-sdk.git
+cd fcs-sdk
+```
+
+### 2. Include the Library in Your Project
+
+Add the `include/` directory to your compiler include paths:
+
+```cmake
+include_directories(${CMAKE_SOURCE_DIR}/fcs-sdk/include)
+```
+
+Or using modern CMake:
+
+```cmake
+add_subdirectory(fcs-sdk)
+target_link_libraries(your_target PRIVATE fcs-sdk)
+```
+
+### 3. Build the SDK
+
+```bash
+mkdir build
+cd build
+cmake ..
+make -j4
+```
+
+### 4. Add FCS-SDK to Your Sources
+
+Include the main header in your C++ files:
+
+```cpp
+#include "fcs/fcs.h"
+```
+
+The SDK has **no external dependencies** and works on:
+
+- Linux
+- Windows
+- macOS
+- STM32 / ESP32 / ARM microcontrollers
+- ROS2 / PX4 / embedded systems
+
+It is fully suitable for **real-time control loops** (100–1000 Hz).
+
+---
+
 ## Directory Structure
 
 ```text
@@ -86,6 +139,71 @@ double loop_step(double delta) {
     return u; // control signal for the actuator
 }
 ```
+
+---
+
+## Architecture
+
+The FCS-SDK implements the Flexionization control loop based on four core operators:
+
+### 1. F — Forward Transform
+A strictly monotonic mapping that transforms the raw deviation Δ into the FXI-space.
+
+\[
+X = F(\Delta)
+\]
+
+F defines how sensitive the controller is to deviations and shapes the dynamic response.
+
+---
+
+### 2. E — Equilibrium Operator
+A contraction operator that reduces the transformed deviation and drives the system toward stability.
+
+\[
+X' = E(X)
+\]
+
+E defines the correction strength and stabilizes the system.
+
+---
+
+### 3. F⁻¹ — Inverse Transform
+Maps the system back from FXI-space into the physical deviation domain.
+
+\[
+\Delta' = F^{-1}(X')
+\]
+
+F⁻¹ guarantees consistency of the control loop and preserves monotonicity.
+
+---
+
+### 4. G — Control Output Mapping
+Converts the corrected deviation Δ' into the actual actuator command.
+
+\[
+u = G(\Delta')
+\]
+
+G can be linear, saturated, adaptive, or domain-specific (servo output, thrust, PWM, etc.).
+
+---
+
+### Control Loop Summary
+
+The controller executes the following pipeline at each update step:
+
+\[
+\Delta \rightarrow F \rightarrow E \rightarrow F^{-1} \rightarrow G \rightarrow u
+\]
+
+This architecture ensures:
+
+- smooth convergence,  
+- stability under nonlinear conditions,  
+- predictable behavior at high frequencies (100–1000 Hz),  
+- compatibility with embedded real-time systems.
 
 ---
 
