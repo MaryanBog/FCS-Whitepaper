@@ -55,6 +55,8 @@ fcs-sdk/
 │   └── servo_position_control.cpp
 │
 └── CMakeLists.txt
+}
+```
 
 ## Quick Start
 
@@ -65,6 +67,8 @@ fcs-sdk/
 #include "fcs/operators/e_operator.h"
 #include "fcs/operators/finv_operator.h"
 #include "fcs/operators/g_operator.h"
+}
+```
 
 // Initialize the controller:
 fcs::FCS ctrl;
