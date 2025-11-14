@@ -254,6 +254,7 @@ This method performs:
 
 ```cpp
 void setF(const fcs::FOperator& op);
+```
 
 Assigns the forward transform operator `F`.
 
@@ -273,6 +274,7 @@ Assigns the equilibrium operator `E`.
 
 ```cpp
 void setFInv(const fcs::FInvOperator& op);
+```
 
 Assigns the inverse transform operator `F⁻¹`.
 
@@ -282,6 +284,7 @@ Assigns the inverse transform operator `F⁻¹`.
 
 ```cpp
 void setG(const fcs::GOperator& op);
+```
 
 Assigns the control-output operator `G`.
 
