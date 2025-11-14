@@ -56,21 +56,17 @@ fcs-sdk/
 │
 └── CMakeLists.txt
 
-Quick Start
-1. Include headers
+## Quick Start
+
+```cpp
+// Include the headers:
 #include "fcs/fcs.h"
 #include "fcs/operators/f_operator.h"
 #include "fcs/operators/e_operator.h"
 #include "fcs/operators/finv_operator.h"
 #include "fcs/operators/g_operator.h"
 
-2. Initialize controller
-#include "fcs/fcs.h"
-#include "fcs/operators/f_operator.h"
-#include "fcs/operators/e_operator.h"
-#include "fcs/operators/finv_operator.h"
-#include "fcs/operators/g_operator.h"
-
+// Initialize the controller:
 fcs::FCS ctrl;
 
 void setup_fcs() {
@@ -80,46 +76,48 @@ void setup_fcs() {
     ctrl.setG(fcs::default_G);
 }
 
-3. Use in control loop
+// Use inside your control loop:
 double loop_step(double delta) {
     // delta = current deviation (error)
     double u = ctrl.update(delta);
-    return u; // control signal for actuator
+    return u; // control signal for the actuator
 }
 
-Control Cycle (FXI–Δ–E + G)
+## How the Control Cycle Works
 
-The update() call implements the following sequence:
+The FCS update step computes:
 
-X = F(Δ) — deviation transformation into FXI-space
+\[
+X = F(\Delta) 
+\]
+— deviation transformation
 
-X' = E(X) — equilibrium contraction (‖E(X)‖ < ‖X‖)
+\[
+X' = E(X)
+\]
+— equilibrium contraction
 
-Δ' = F⁻¹(X') — mapping back to deviation space
+\[
+\Delta' = F^{-1}(X')
+\]
+— inverse mapping
 
-u = G(Δ') — control signal for the physical actuator
+\[
+u = G(\Delta')
+\]
+— actuator command output
 
-This provides smooth, monotonic convergence and robust behavior in nonlinear and turbulent environments where classical PID controllers often become unstable.
+The controller provides smooth and stable convergence, even in nonlinear or turbulent environments where classical PID becomes unstable.
 
-Integration Notes
+## Integration Notes
 
-Recommended usage in loops of 100–1000 Hz
+- Designed for real-time loops (100–1000 Hz)
+- Works on microcontrollers (no heap usage)
+- Can directly replace or augment PID controllers
+- G operator can be nonlinear or saturated (tanh, piecewise, adaptive)
 
-Safe for microcontrollers (no heap allocations inside update())
+## License
 
-Can replace or augment existing PID loops
+All SDK materials are the intellectual property of the author.  
+For commercial usage, licensing terms are available on request.
 
-Custom operators F, E, F⁻¹, G can be implemented for:
-
-saturation,
-
-asymmetry,
-
-adaptive behavior,
-
-hardware-specific constraints.
-
-License
-
-All SDK materials are the intellectual property of the author.
-For commercial use, licensing terms are available on request.
