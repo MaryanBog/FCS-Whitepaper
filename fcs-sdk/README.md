@@ -207,6 +207,297 @@ This architecture ensures:
 
 ---
 
+## API Reference
+
+### Class: `fcs::FCS`
+
+Main controller implementing the full FXI–Δ–E cycle.
+
+---
+
+### **Constructor**
+
+```cpp
+FCS();
+```
+
+Creates an empty controller with no operators set.
+
+---
+
+### **update()**
+
+```cpp
+double update(double delta);
+```
+
+Runs a single control-loop iteration.
+
+**Parameters:**
+- `delta` — current deviation (error)
+
+**Returns:**
+- `double` — actuator command `u`
+
+This method performs:
+
+\[
+\Delta \rightarrow F \rightarrow E \rightarrow F^{-1} \rightarrow G \rightarrow u
+\]
+
+---
+
+### **setF()**
+
+```cpp
+void setF(FOperator op);
+```
+
+Assigns the forward transform operator `F`.
+
+---
+
+### **setE()**
+
+```cpp
+void setE(EOperator op);
+```
+
+Assigns the equilibrium operator `E`.
+
+---
+
+### **setFInv()**
+
+```cpp
+void setFInv(FInvOperator op);
+```
+
+Assigns the inverse transform operator `F⁻¹`.
+
+---
+
+### **setG()**
+
+```cpp
+void setG(GOperator op);
+```
+
+Assigns the control-output operator `G`.
+
+---
+
+### **Operator Requirements**
+
+Each operator must be a callable object:
+
+```cpp
+double operator()(double x) const;
+```
+
+This ensures compatibility with embedded targets and avoids dynamic allocation.
+
+---
+
+### Summary
+
+The FCS API exposes only:
+
+- configuration of operators (F, E, F⁻¹, G)  
+- single-step control update  
+
+making it deterministic, fast, and suitable for real-time systems.
+
+---
+
+## Default Operators
+
+The FCS-SDK includes a set of preconfigured default operators suitable for most real-time control applications.  
+They provide stable, predictable behavior and are safe for embedded systems.
+
+---
+
+### **1. default_F — Forward Transform**
+
+A monotonic mapping that shapes the deviation response.
+
+```cpp
+double default_F(double x) {
+    return x;
+}
+```
+
+This is a linear identity transform:
+
+\[
+F(\Delta) = \Delta
+\]
+
+It can be replaced with nonlinear forms (tanh, softsign, piecewise).
+
+---
+
+### **2. default_E — Equilibrium Operator**
+
+A contracting operator that reduces the transformed deviation.
+
+```cpp
+double default_E(double x) {
+    return 0.8 * x;
+}
+```
+
+Mathematically:
+
+\[
+X' = k \cdot X, \quad 0 < k < 1
+\]
+
+By default:  
+**k = 0.8** — stable and conservative contraction.
+
+---
+
+### **3. default_FInv — Inverse Transform**
+
+The inverse mapping for the chosen `F`.
+
+```cpp
+double default_FInv(double x) {
+    return x;
+}
+```
+
+Identity inverse:
+
+\[
+F^{-1}(X') = X'
+\]
+
+For nonlinear `F`, users must provide matching `F⁻¹`.
+
+---
+
+### **4. default_G — Output Mapping**
+
+Converts corrected deviation into actuator command.
+
+```cpp
+double default_G(double x) {
+    return x;
+}
+```
+
+This is the simplest linear control law:
+
+\[
+u = \Delta'
+\]
+
+Users can replace it with:
+
+- saturation,
+- piecewise asymmetric response,
+- PWM conversion,
+- servo mapping,
+- thrust curves.
+
+---
+
+### Summary
+
+The default operator set provides:
+
+- linear response,  
+- deterministic timing,  
+- guaranteed stability,  
+- safe behavior for high-frequency loops (100–1000 Hz).
+
+They serve as a baseline and can be replaced with domain-specific nonlinear operators.
+
+---
+
+## Examples
+
+Below are minimal usage examples demonstrating how to integrate the FCS controller into real systems.
+
+---
+
+### Example 1 — Simple Loop Test
+
+A minimal test loop running at a fixed frequency.
+
+```cpp
+#include "fcs/fcs.h"
+
+fcs::FCS ctrl;
+
+void setup() {
+    ctrl.setF(fcs::default_F);
+    ctrl.setE(fcs::default_E);
+    ctrl.setFInv(fcs::default_FInv);
+    ctrl.setG(fcs::default_G);
+}
+
+double loop_step(double measured, double target) {
+    double delta = measured - target;
+    return ctrl.update(delta);
+}
+```
+
+---
+
+### Example 2 — Servo Position Control
+
+Use FCS to produce a PWM-like output for a servo.
+
+```cpp
+#include "fcs/fcs.h"
+
+fcs::FCS ctrl;
+
+int compute_servo_pwm(double position, double target) {
+    double delta = position - target;
+    double u = ctrl.update(delta);
+
+    // Convert [-1,1] → [1000,2000] µs PWM
+    return 1500 + (int)(u * 500.0);
+}
+```
+
+---
+
+### Example 3 — Drone Altitude Control
+
+A simplified altitude-hold loop (e.g. PX4/ArduPilot style).
+
+```cpp
+#include "fcs/fcs.h"
+
+fcs::FCS ctrl;
+
+double altitude_control(double z, double z_target) {
+    double delta = z - z_target;
+    double u = ctrl.update(delta);
+
+    // Map control signal to thrust motor command
+    double thrust = 0.5 + 0.5 * u; // clamps automatically if G is saturated
+    return thrust;
+}
+```
+
+---
+
+These examples demonstrate:
+
+- deviation computation  
+- running the update loop  
+- mapping control output to real actuators  
+
+More advanced examples can be added for ROS2, PX4, and STM32.
+
+---
+
 ## How the Control Cycle Works
 
 \[
