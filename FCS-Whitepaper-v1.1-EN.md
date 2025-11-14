@@ -191,3 +191,128 @@ This forms a closed nonlinear control loop that remains stable in the presence o
 
 ---
 
+# 5. Stability and Convergence Properties
+
+One of the key advantages of the Flexionization Control System (FCS) is its strong mathematical stability, which emerges from the combination of the monotonic transformation **F** and the equilibrium operator **E**. Together, they create a dynamic that is guaranteed to converge toward the state **Δ = 0** across a wide range of initial conditions and external disturbances.  
+This makes FCS a reliable tool for controlling nonlinear systems where traditional methods often lose stability.
+
+Stability is ensured by the contractive property of the operator **E**.  
+For all values within the operational domain, it satisfies:
+
+**|E(x)| < |x|**
+
+This means the operator always reduces the magnitude of deviations.  
+The function **F : Δ → X**, being strictly monotonic and bijective, guarantees that the transformation preserves ordering and does not distort the correctness of the update.  
+Thus, the combination of **F** and **E** forms a stable dynamic loop within the FXI-space, while **F⁻¹ : X → Δ** correctly transfers the result back to the real deviation domain.
+
+Importantly, the stability of FCS does not depend on the linearity of the controlled system.  
+Even in the presence of saturations, nonlinear effects, asymmetries, and noise, the operator **E** continues to reduce deviations, and the FXI–Δ–E loop maintains convergence. This makes FCS particularly effective for tasks such as:
+
+- drone control in turbulent airflow,  
+- stabilization of robotic joints under variable load,  
+- vibration suppression,  
+- operation in rapidly changing conditions.
+
+Additionally, Flexionization dynamics exhibit **smooth convergence**:  
+the system approaches equilibrium gradually, without sharp jumps or overshoot—problems typical for PID controllers.  
+This is critical in robotics, where excessive oscillations may damage equipment or lead to unstable behavior.
+
+Because of these properties, FCS delivers stable, predictable, and robust stabilization across a wide variety of systems and environments.
+
+---
+
+# 6. Control Action Function G
+
+The function **G** is the link between the internal Flexionization dynamics (the FXI–Δ–E loop) and the physical system being controlled. While **Δ**, **F**, **E**, and **F⁻¹** define how the system internally reduces deviations, it is **G** that converts the corrected deviation into a real control signal applied to motors, actuators, or mechanical subsystems.
+
+## 6.1. Purpose of the Function G
+
+The function **G : Δ → U** maps deviation values into control actions within the physical control space **U**. At each discrete time step:
+
+**uₜ = G(Δₜ₊₁)**
+
+where **Δₜ₊₁** is the updated (smoothed) deviation obtained from the FXI–Δ–E loop. Without **G**, the controller would remain a purely mathematical construct; through **G**, it becomes an operational control system.
+
+## 6.2. Requirements for the Function G
+
+For correct operation of FCS, the control function **G** must satisfy:
+
+- **monotonicity:** larger deviations must produce stronger control signals;  
+- **smoothness:** no discontinuities or sharp jumps;  
+- **nonlinearity awareness:** ability to incorporate actuator limits, backlash, and asymmetries;  
+- **bounded output:** the control action must stay within the physical limits  
+  **U_min ≤ u ≤ U_max**.
+
+These conditions ensure that **G** does not undermine the intrinsic stability of the FXI–Δ–E loop.
+
+## 6.3. Linear Form of G
+
+A simple and widely applicable form is:
+
+**G(Δ) = k · Δ**, where **k > 0**
+
+Effective for:
+
+- standard servomechanisms,  
+- simple stabilization mechanisms,  
+- small robots and drones.
+
+Pros: predictable, easy to tune.  
+Cons: sensitive to nonlinearities and saturations.
+
+## 6.4. Nonlinear Forms of G
+
+### Smooth Saturation
+
+**G(Δ) = k · tanh(Δ)**
+
+Useful for:
+
+- robotic arms under load,  
+- gimbals under vibration,  
+- drones in turbulent airflow.
+
+### Asymmetric Control Law
+
+$G(\Delta) = k_1 \Delta$ при $\Delta > 0$  
+$G(\Delta) = k_2 \Delta$ при $\Delta < 0,$
+
+
+where **k₁ ≠ k₂**.  
+This models systems with directional asymmetry (up vs. down, forward vs. backward).
+
+## 6.5. Adaptive Variants of G
+
+Adaptive control functions depend on both the deviation and auxiliary system states:
+
+**G : (Δ, s) → U**
+
+where **s** may include speed, temperature, load, battery level, etc.
+
+Examples:
+
+- decreasing control aggressiveness under motor overheating,  
+- adapting gain to payload mass,  
+- compensating variable friction or inertia.
+
+## 6.6. Role of G in the FCS Architecture
+
+The FXI–Δ–E loop provides the internal stabilization dynamic:
+
+- **F : Δ → X**  
+- **E : X → X**  
+- **F⁻¹ : X → Δ**
+
+After this transformation, the control function **G : Δ → U** produces the physical action:
+
+**uₜ = G(Δₜ₊₁)**
+
+In architectural terms:
+
+- **FXI–Δ–E** — the stabilization core,  
+- **G** — the hardware-facing execution layer.
+
+Together, they form a complete and functional Flexionization Control System.
+
+---
+
