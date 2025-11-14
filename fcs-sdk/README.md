@@ -382,16 +382,17 @@ Converts corrected deviation into actuator command.
 
 ```cpp
 double default_G(double x) {
-    return x;
+    return x;    // linear mapping: G(x) = x
 }
 ```
 
 This is the simplest linear control law:
 
 \[
-u = G(\Delta')
+u = G(\Delta') = \Delta'
 \]
 
+The default operator implements **G(x) = x**, which acts as a direct linear mapping.  
 Users can replace it with:
 
 - saturation,
