@@ -295,6 +295,10 @@ Each operator must be a callable object:
 double operator()(double x) const;
 ```
 
+- F must be strictly monotonic.
+- F⁻¹ must be the true inverse of F.
+- E must be a contraction operator: 0 < k < 1 for linear versions, or an equivalent monotonic reducing map for nonlinear ones.
+
 This ensures compatibility with embedded targets and avoids dynamic allocation.
 
 ---
