@@ -498,32 +498,6 @@ More advanced examples can be added for ROS2, PX4, and STM32.
 
 ---
 
-## How the Control Cycle Works
-
-\[
-X = F(\Delta)
-\]
-— deviation transformation
-
-\[
-X' = E(X)
-\]
-— equilibrium contraction
-
-\[
-\Delta' = F^{-1}(X')
-\]
-— inverse mapping
-
-\[
-u = G(\Delta')
-\]
-— actuator command output
-
-The controller provides smooth and stable convergence, even in nonlinear or turbulent environments where classical PID becomes unstable.
-
----
-
 ## Integration Notes
 
 - Designed for real-time loops (100–1000 Hz)
