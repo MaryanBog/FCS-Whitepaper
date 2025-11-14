@@ -1,39 +1,35 @@
-FCS-SDK — Flexionization Control System
-Technical SDK for Embedded Robotics and UAV Control
+# FCS-SDK — Flexionization Control System
+## Technical SDK for Embedded Robotics and UAV Control
 
-The FCS-SDK is a lightweight C++ implementation of the Flexionization Control System (FCS) based on the FXI–Δ–E architecture and the control function G : Δ → U.
-The SDK is intended for integration into embedded control loops such as:
+**FCS-SDK** is a lightweight C++ implementation of the Flexionization Control System (FCS) based on the **FXI–Δ–E** architecture and the control function **G : Δ → U**.
 
-flight controllers (PX4, ArduPilot),
+The SDK is intended for integration into embedded real-time control loops such as:
 
-robotic manipulators,
-
-servo/actuator systems,
-
-ROS2 motion nodes,
-
-STM32/ESP32/ARM microcontrollers,
-
-autonomous ground robots.
+- flight controllers (PX4, ArduPilot),
+- robotic manipulators,
+- servo/actuator systems,
+- ROS2 motion nodes,
+- STM32/ESP32/ARM microcontrollers,
+- autonomous ground robots.
 
 The library is dependency-free and suitable for real-time systems.
 
-Features
+---
 
-Full nonlinear control cycle FXI–Δ–E implemented in C++
+## Features
 
-Modular operators: F, E, F⁻¹, G can be replaced or customized
+- Full nonlinear control cycle **FXI–Δ–E** implemented in C++
+- Pluggable operators: **F**, **E**, **F⁻¹**, **G**
+- Deterministic execution (no dynamic allocation)
+- Default linear operators included
+- Suitable for high-frequency loops (100–1000 Hz)
+- Ready for embedded use (MCUs, SBCs, industrial controllers)
 
-Deterministic execution (no dynamic allocation)
+---
 
-Default linear operators included
+## Directory Structure
 
-Ready for embedded use and high-frequency control loops
-
-Compatible with PX4/ROS2/STM32 bare-metal environments
-
-Directory Structure
-
+```text
 fcs-sdk/
 │
 ├── include/
@@ -61,50 +57,69 @@ fcs-sdk/
 └── CMakeLists.txt
 
 Quick Start
-
-1. Include the headers:
-   #include "fcs/fcs.h"
+1. Include headers
+#include "fcs/fcs.h"
 #include "fcs/operators/f_operator.h"
 #include "fcs/operators/e_operator.h"
 #include "fcs/operators/finv_operator.h"
 #include "fcs/operators/g_operator.h"
 
-2. Initialize the controller:
-   fcs::FCS ctrl;
-ctrl.setF(fcs::default_F);
-ctrl.setE(fcs::default_E);
-ctrl.setFInv(fcs::default_FInv);
-ctrl.setG(fcs::default_G);
+2. Initialize controller
+#include "fcs/fcs.h"
+#include "fcs/operators/f_operator.h"
+#include "fcs/operators/e_operator.h"
+#include "fcs/operators/finv_operator.h"
+#include "fcs/operators/g_operator.h"
 
-3. Use inside your control loop:
+fcs::FCS ctrl;
 
-double u = ctrl.update(delta);
+void setup_fcs() {
+    ctrl.setF(fcs::default_F);
+    ctrl.setE(fcs::default_E);
+    ctrl.setFInv(fcs::default_FInv);
+    ctrl.setG(fcs::default_G);
+}
 
-How the Control Cycle Works
+3. Use in control loop
+double loop_step(double delta) {
+    // delta = current deviation (error)
+    double u = ctrl.update(delta);
+    return u; // control signal for actuator
+}
 
-The FCS update step computes:
+Control Cycle (FXI–Δ–E + G)
 
-X = F(Δ) — deviation transformation
+The update() call implements the following sequence:
 
-X' = E(X) — equilibrium contraction
+X = F(Δ) — deviation transformation into FXI-space
 
-Δ' = F⁻¹(X') — inverse mapping
+X' = E(X) — equilibrium contraction (‖E(X)‖ < ‖X‖)
 
-u = G(Δ') — actuator command output
+Δ' = F⁻¹(X') — mapping back to deviation space
 
-The controller provides smooth and stable convergence, even in nonlinear or turbulent environments where classical PID becomes unstable.
+u = G(Δ') — control signal for the physical actuator
+
+This provides smooth, monotonic convergence and robust behavior in nonlinear and turbulent environments where classical PID controllers often become unstable.
 
 Integration Notes
 
-Designed for real-time loops (100–1000 Hz)
+Recommended usage in loops of 100–1000 Hz
 
-Works on microcontrollers (no heap usage)
+Safe for microcontrollers (no heap allocations inside update())
 
-Can directly replace or augment PID controllers
+Can replace or augment existing PID loops
 
-G operator can be nonlinear or saturated (tanh, piecewise, adaptive)
+Custom operators F, E, F⁻¹, G can be implemented for:
+
+saturation,
+
+asymmetry,
+
+adaptive behavior,
+
+hardware-specific constraints.
 
 License
 
 All SDK materials are the intellectual property of the author.
-For commercial usage, licensing terms are available on request.
+For commercial use, licensing terms are available on request.
