@@ -1,10 +1,10 @@
 #include <iostream>
 
-#include "../include/fcs/fcs.h"
-#include "../include/fcs/operators/f_operator.h"
-#include "../include/fcs/operators/e_operator.h"
-#include "../include/fcs/operators/finv_operator.h"
-#include "../include/fcs/operators/g_operator.h"
+#include <fcs/fcs.h>
+#include <fcs/operators/f_operator.h>
+#include <fcs/operators/e_operator.h>
+#include <fcs/operators/finv_operator.h>
+#include <fcs/operators/g_operator.h>
 
 using namespace fcs;
 
@@ -19,10 +19,8 @@ int main() {
     controller.setFInv(default_FInv);
     controller.setG(default_G);
 
-    // --- Стартовое отклонение ---
-    double delta = 10.0;
-
-    std::cout << "Initial delta: " << delta << std::endl;
+    // Начальная ошибка
+    double delta = 1.0;
 
     // --- Несколько шагов стабилизации ---
     for (int i = 0; i < 10; i++) {
@@ -36,4 +34,3 @@ int main() {
 
     return 0;
 }
-
