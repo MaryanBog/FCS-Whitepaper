@@ -3,10 +3,9 @@
 
 namespace fcs {
 
-    // Линейный контрактор: E(x) = alpha * x  (0 < alpha < 1)
+    // Линейный оператор E: сглаживание или корректировка
     double default_E(double x);
 
 }
 
 #endif
-
