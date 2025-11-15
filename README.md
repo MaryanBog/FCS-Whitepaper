@@ -1,58 +1,57 @@
-# FCS — Flexionization Control System  
-## Technical Whitepaper Repository
+# FCS-SDK — Flexionization Control System
+## Technical SDK for Embedded Robotics and UAV Control
 
-This repository contains the official technical documentation for the **Flexionization Control System (FCS)** — a nonlinear control architecture based on the FXI–Δ–E framework with an extended control function **G : Δ → U**.
+**FCS-SDK** is a lightweight C++ implementation of the Flexionization Control System (FCS) based on the **FXI–Δ–E** architecture and the control function **G : Δ → U**.
 
-FCS provides a mathematically stable and hardware-independent method for controlling nonlinear, turbulent, or rapidly changing systems such as UAVs, robotic manipulators, servomechanisms, actuators, and high-precision mechatronic platforms.
+The SDK is intended for integration into embedded real-time control loops such as:
 
----
+- flight controllers (PX4, ArduPilot),
+- robotic manipulators,
+- servo/actuator systems,
+- ROS2 motion nodes,
+- STM32/ESP32/ARM microcontrollers,
+- autonomous ground robots.
 
-## Repository Structure
-
-- **FCS-Whitepaper-v1.1-EN.md** — primary English whitepaper  
-- **FCS-Whitepaper-v1.0.md** — source Russian version  
-- Additional technical materials may be added in subsequent revisions:
-  - implementation guidelines,
-  - simulation benchmarks,
-  - hardware integration notes,
-  - control law examples for different actuator classes.
+The library is dependency-free and suitable for real-time systems.
 
 ---
 
-## Overview of the Architecture
+## Core Idea
 
-FCS is built on the core Flexionization loop:
+FCS implements the **FXI–Δ–E** loop:
 
-- **F : Δ → X** — strictly monotonic transformation of deviation  
-- **E : X → X** — equilibrium operator satisfying \|E(x)\| < \|x\|  
-- **F⁻¹ : X → Δ** — inverse mapping into deviation space  
-- **G : Δ → U** — control-signal formation layer for physical actuators  
+1. Transform deviation Δ into FXI-space using **F**  
+2. Apply equilibrium correction **E**  
+3. Convert corrected value back using **F⁻¹**  
+4. Generate control signal via **G**
 
-This structure yields:
-
-- nonlinear, monotonic convergence,  
-- overshoot-free stabilization,  
-- robustness to noise and turbulence,  
-- independence from explicit plant models,  
-- uniform applicability across heterogeneous systems.
+This structure generalizes PID-like behavior while remaining stable, monotonic, and suitable for nonlinear actuators.
 
 ---
 
-## Purpose of the Repository
+## Overview of Included Components
 
-The repository serves as the central reference point for:
+- `F` — deviation transformation  
+- `E` — equilibrium operator  
+- `F⁻¹` — inverse mapping  
+- `G` — control output shaping  
+- `FCS` — main control loop class  
+- example applications and integration templates
 
-- maintaining official revisions of the whitepaper,  
-- tracking changes and research updates,  
-- preparing implementation-level specifications,  
-- providing supporting documentation for future engineering modules.
-
----
-
-## Licensing and Intellectual Property
-
-All materials contained in this repository are the intellectual property of the author.  
-Unauthorized reproduction, distribution, or modification is prohibited unless explicitly permitted.
+All operators are easily replaceable with user-defined functions.
 
 ---
 
+## Integration Notes
+
+- Designed for real-time loops (100–1000 Hz)  
+- Works on microcontrollers (no heap usage)  
+- Can directly replace or augment PID controllers  
+- G operator can be nonlinear or saturated (tanh, piecewise, adaptive)
+
+---
+
+## License
+
+All SDK materials are the intellectual property of the author.  
+For commercial usage, licensing terms are available on request.
