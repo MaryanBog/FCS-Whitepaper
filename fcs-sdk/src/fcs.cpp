@@ -1,52 +1,43 @@
-#include "fcs.h"
+#include "fcs/fcs.h"
 
 namespace fcs {
 
-    // --- Конструктор ---
+    // Конструктор
     FCS::FCS()
-        : F(nullptr), E(nullptr), FInv(nullptr), G(nullptr)
-    {}
+        : F(nullptr), E(nullptr), FInv(nullptr), G(nullptr) {}
 
-    // --- Установка операторов ---
+    // Установка оператора F
     void FCS::setF(FOperator f_op) {
         F = f_op;
     }
 
+    // Установка оператора E
     void FCS::setE(EOperator e_op) {
         E = e_op;
     }
 
+    // Установка оператора F⁻¹
     void FCS::setFInv(FInvOperator finv_op) {
         FInv = finv_op;
     }
 
+    // Установка оператора G
     void FCS::setG(GOperator g_op) {
         G = g_op;
     }
 
-    // --- Основной цикл обновления ---
+    // Основной цикл управления
     double FCS::update(double delta) {
+        if (!F || !E || !FInv || !G)
+            return 0.0; // оператор не настроен
 
-        // Базовая проверка: все операторы должны быть заданы
-        if (!F || !E || !FInv || !G) {
-            // В проде сюда можно повесить assert или error-code.
-            // Пока — возвращаем 0 как безопасное значение.
-            return 0.0;
-        }
-
-        // 1. FXI = F(delta)
-        double x = F(delta);
-
-        // 2. X' = E(FXI)
-        double x_next = E(x);
-
-        // 3. delta' = FInv(X')
-        double delta_next = FInv(x_next);
-
-        // 4. u = G(delta')
-        double u = G(delta_next);
+        double x  = F(delta);   // преобразование в FXI-пространство
+        double xe = E(x);       // корректировка
+        double d  = FInv(xe);   // обратное преобразование
+        double u  = G(d);       // управляющее воздействие
 
         return u;
     }
 
 } // namespace fcs
+
