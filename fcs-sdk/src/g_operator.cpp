@@ -1,12 +1,12 @@
-#include "g_operator.h"
+#include "fcs/operators/g_operator.h"
 
 namespace fcs {
 
-    static const double kG = 1.0;  // коэффициент управления
+    // Линейный G-оператор (управляющее воздействие)
+    static const double kG = 1.0;
 
     double default_G(double delta) {
         return kG * delta;
     }
 
 }
-
