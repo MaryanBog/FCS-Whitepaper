@@ -29,3 +29,5 @@ target_link_libraries(servo_position_control fcs-sdk)
 add_executable(drone_altitude_control examples/drone_altitude_control.cpp)
 target_link_libraries(drone_altitude_control fcs-sdk)
 
+add_executable(simple_loop_nonlinear examples/simple_loop_nonlinear.cpp)
+target_link_libraries(simple_loop_nonlinear fcs-sdk)
