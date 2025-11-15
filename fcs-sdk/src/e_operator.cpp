@@ -1,12 +1,12 @@
-#include "e_operator.h"
+#include "fcs/operators/e_operator.h"
 
 namespace fcs {
 
-    static const double alpha = 0.8;  // степень сжатия
+    // Линейный E-оператор (степень корректировки)
+    static const double alpha = 0.8;
 
     double default_E(double x) {
         return alpha * x;
     }
 
 }
-
