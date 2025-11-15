@@ -303,3 +303,10 @@ We are raising funding to bring FCS from a validated deep-tech prototype to a pr
 - early position in a system designed to replace PID  
 
 FCS is ready for the next stage — scaling into the global robotics and UAV ecosystem.
+
+---
+
+**Full Mathematical Theory (Flexionization V1.5)**  
+Preprint: https://zenodo.org/records/17618948  
+DOI: 10.5281/zenodo.17618948
+

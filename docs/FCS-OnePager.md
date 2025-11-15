@@ -73,3 +73,9 @@ For technical questions, commercial licensing, or collaboration requests, please
 
 **Email:** m7823445@gmail.com  
 **GitHub:** https://github.com/MaryanBog
+
+---
+
+**Full Mathematical Theory (Flexionization V1.5)**  
+Preprint: https://zenodo.org/records/17618948  
+DOI: 10.5281/zenodo.17618948

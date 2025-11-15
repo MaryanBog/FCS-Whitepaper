@@ -509,3 +509,15 @@ More advanced examples can be added for ROS2, PX4, and STM32.
 
 All SDK materials are the intellectual property of the author.  
 For commercial usage, licensing terms are available on request.
+
+---
+
+## Mathematical Foundation (Flexionization Theory)
+
+The full mathematical theory behind the FCS architecture is published here:
+
+**Preprint:** https://zenodo.org/records/17618948  
+**DOI:** 10.5281/zenodo.17618948
+
+This document formally defines the FXI–Δ–E model, equilibrium operators, structural deviation, and stability theorems that underlie the FCS control architecture.
+
